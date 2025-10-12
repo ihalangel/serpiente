@@ -1,40 +1,9 @@
-# react-simple-snake
-[![GitHub](https://img.shields.io/github/license/MaelDrapier/react-simple-snake)](https://github.com/MaelDrapier/react-simple-snake/blob/master/LICENSE)
-[![npm](https://img.shields.io/npm/v/react-simple-snake?color=blue)](https://www.npmjs.com/package/react-simple-snake)
-[![npm peer dependency version](https://img.shields.io/npm/dependency-version/react-simple-snake/peer/react?color=cyan)](https://www.npmjs.com/package/react)
-[![npm](https://img.shields.io/npm/dm/react-simple-snake)](https://www.npmjs.com/package/react-simple-snake)
-
-A simple snake game created with the [React](https://reactjs.org) JavaScript library.
-
-- [Demo](#demo)
-- [Installation](#installation)
-  - [To add it to your React app](#to-add-it-to-your-react-app)
-  - [To launch the development server](#to-launch-the-development-server)
-- [Dependencies](#dependencies)
-- [Usage](#usage)
-  - [To import it in your component](#to-import-it-in-your-component)
-  - [Props](#props)
-- [How to play](#how-to-play)
-- [High-Score](#high-score)
-
-<br/>
-
-## Demo
-[![Website](https://img.shields.io/website?label=demo%20status%3A&url=https%3A%2F%2Fmaeldrapier.github.io%2Freact-simple-snake%2F)](https://MaelDrapier.github.io/react-simple-snake)
-
-A demo is available [here](https://MaelDrapier.github.io/react-simple-snake).
-
-<br/>
-
-## Installation
-
-### To add it to your react app
-- `npm install react-simple-snake`
+# react-snake
 
 ### To launch the development server
 
-- `git clone https://github.com/MaelDrapier/react-simple-snake.git`
-- `cd react-simple-snake`
+- `git clone https://github.com/snake-devhub/react-snake.git`
+- `cd react-snake`
 - `npm install`
 - `npm start`
 
@@ -44,23 +13,6 @@ A demo is available [here](https://MaelDrapier.github.io/react-simple-snake).
 This project needs [react](https://www.npmjs.com/package/react) to operate. Install it with `npm install react`
 
 <br/>
-
-## Usage
-
-### To import it in your component
-
-``` javascript
-import Snake from 'react-simple-snake'
-
-export default function YourComponent() {
-  return(
-    <div>
-      <Snake />
-    </div>
-  )
-}
-
-```
 
 ### Props
 _All props are optional_
