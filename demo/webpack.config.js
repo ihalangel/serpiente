@@ -1,5 +1,5 @@
 var path = require('path')
-var loadCss = require('webpack-loadcss');
+// var loadCss = require('webpack-loadcss');
 const port = process.env.PORT || 3000
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
         path: path.resolve(__dirname, 'public'),
         filename: 'bundle.js',
 	},
-    plugins: [loadCss],
+    // plugins: [loadCss],
 	module: {
 		rules: [
 			{
@@ -24,13 +24,16 @@ module.exports = {
         ]
     },
     devServer: {
-        contentBase: path.resolve(__dirname, 'public'),
+        static: {
+  directory: path.resolve(__dirname, 'public'),
+},
+
         host: 'localhost',
         port: port,
         historyApiFallback: true,
         open: true,
-        transportMode: 'ws',
-        injectClient: false
+        hot: true,
+        historyApiFallback: true,
       },
     devtool: 'inline-source-map'
 }
