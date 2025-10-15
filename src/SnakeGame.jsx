@@ -1,8 +1,9 @@
 import React from 'react'
 import './SnakeGame.css'
 import GameOver from './GameOver.jsx'
-import Snake from './game/Snake.jsx' // Módulo con la lógica de la serpiente
-import SnakeBody from './game/SnakeBody.jsx' // Nuevo componente visual para la serpiente
+import Snake from './game/Snake.jsx'
+import SnakeBody from './game/SnakeBody.jsx'
+import Apple from './game/Apple.jsx'
 
 class SnakeGame extends React.Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class SnakeGame extends React.Component {
       gameLoopTimeout: 50,
       timeoutId: 0,
       startSnakeSize: this.props.startSnakeSize || 6,
-      snakes: [], // Array de instancias Snake
+      snakes: [],
       apple: {},
       directionChanged: false,
       isGameOver: false,
@@ -194,6 +195,8 @@ class SnakeGame extends React.Component {
   }
 
   render() {
+    if (!this.state) return null  // Protección para evitar error por state null
+
     if (this.state.isGameOver) {
       return (
         <GameOver
@@ -224,17 +227,15 @@ class SnakeGame extends React.Component {
             color={snake.color}
           />
         ))}
-        <div
-          className='Block'
-          style={{
-            width: this.state.blockWidth,
-            height: this.state.blockHeight,
-            left: this.state.apple.Xpos,
-            top: this.state.apple.Ypos,
-            background: this.state.appleColor,
-            position: 'absolute',
-          }}
+
+        <Apple
+          Xpos={this.state.apple.Xpos}
+          Ypos={this.state.apple.Ypos}
+          blockWidth={this.state.blockWidth}
+          blockHeight={this.state.blockHeight}
+          color={this.state.appleColor}
         />
+
         <div id='Score' style={{ fontSize: this.state.width / 20 }}>
           HIGH-SCORE: {this.state.highScore}&ensp;&ensp;&ensp;&ensp;SCORE:{' '}
           {this.state.score}
