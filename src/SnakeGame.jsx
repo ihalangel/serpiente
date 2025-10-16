@@ -20,7 +20,7 @@ class SnakeGame extends React.Component {
       timeoutId: 0,
       startSnakeSize: this.props.startSnakeSize || 6,
       snakes: [], // Ahora guardamos dos serpientes
-      apple: {},
+      foods: [],  // se cambio a array para permitir multiples alimentos
       directionChanged: false,
       isGameOver: false,
       snakeColors: [this.props.snakeColor || this.getRandomColor(), this.getRandomColor()],
@@ -66,17 +66,19 @@ class SnakeGame extends React.Component {
       this.state.snakeColors[1]
     )
 
-    // Generar posición inicial aleatoria de apple que no esté sobre ninguna serpiente
-    let appleXpos =
-      Math.floor(Math.random() * ((width - blockWidth) / blockWidth + 1)) *
-      blockWidth
-    let appleYpos =
-      Math.floor(Math.random() * ((height - blockHeight) / blockHeight + 1)) *
-      blockHeight
-    while (snake1.occupiesPosition(appleXpos, appleYpos) || snake2.occupiesPosition(appleXpos, appleYpos)) {
-      appleYpos =
-        Math.floor(Math.random() * ((height - blockHeight) / blockHeight + 1)) *
-        blockHeight
+  // Generate two food positions avoiding snake bodies and overlap
+    let foods = []
+    for (let i = 0; i < 2; i++) {
+      let foodX, foodY
+      do {
+        foodX = Math.floor(Math.random() * ((width - blockWidth) / blockWidth + 1)) * blockWidth
+        foodY = Math.floor(Math.random() * ((height - blockHeight) / blockHeight + 1)) * blockHeight
+      } while (
+        snake1.occupiesPosition(foodX, foodY) ||
+        snake2.occupiesPosition(foodX, foodY) ||
+        foods.some(f => f.Xpos === foodX && f.Ypos === foodY)
+      )
+      foods.push({ Xpos: foodX, Ypos: foodY })
     }
 
     this.setState({
@@ -85,7 +87,7 @@ class SnakeGame extends React.Component {
       blockWidth,
       blockHeight,
       snakes: [snake1, snake2],
-      apple: { Xpos: appleXpos, Ypos: appleYpos },
+      foods,
       isGameOver: false,
       score: [0, 0],
       newHighScore: false,
@@ -96,7 +98,7 @@ class SnakeGame extends React.Component {
   gameLoop() {
     let timeoutId = setTimeout(() => {
       if (!this.state.isGameOver) {
-        let snakes = this.state.snakes.map((snake, index) => {
+        let snakes = this.state.snakes.map(snake => {
           snake.move(this.state.width, this.state.height)
           if (snake.isSelfCollision()) {
             this.setState({ isGameOver: true })
@@ -104,54 +106,47 @@ class SnakeGame extends React.Component {
           return snake
         })
 
-        let apple = this.state.apple
-        // Revisar colisión de manzana con cada serpiente y actualizar puntaje
+        let foods = [...this.state.foods]
+        let scores = [...this.state.score]
+        let highScore = this.state.highScore
+        let newHighScore = this.state.newHighScore
+        let gameLoopTimeout = this.state.gameLoopTimeout
+
         snakes.forEach((snake, idx) => {
           let head = snake.segments[0]
-          if (head.Xpos === apple.Xpos && head.Ypos === apple.Ypos) {
-            snake.grow()
-            let newAppleX =
-              Math.floor(Math.random() * ((this.state.width - this.state.blockWidth) / this.state.blockWidth + 1)) *
-              this.state.blockWidth
-            let newAppleY =
-              Math.floor(Math.random() * ((this.state.height - this.state.blockHeight) / this.state.blockHeight + 1)) *
-              this.state.blockHeight
-            while (snakes.some(s => s.occupiesPosition(newAppleX, newAppleY))) {
-              newAppleX =
-                Math.floor(Math.random() * ((this.state.width - this.state.blockWidth) / this.state.blockWidth + 1)) *
-                this.state.blockWidth
-              newAppleY =
-                Math.floor(Math.random() * ((this.state.height - this.state.blockHeight) / this.state.blockHeight + 1)) *
-                this.state.blockHeight
+          foods.forEach((food, foodIdx) => {
+            if (head.Xpos === food.Xpos && head.Ypos === food.Ypos) {
+              snake.grow()
+              // Respawn the eaten food avoiding all snakes and other foods
+              let newFoodX, newFoodY
+              do {
+                newFoodX = Math.floor(Math.random() * ((this.state.width - this.state.blockWidth) / this.state.blockWidth + 1)) * this.state.blockWidth
+                newFoodY = Math.floor(Math.random() * ((this.state.height - this.state.blockHeight) / this.state.blockHeight + 1)) * this.state.blockHeight
+              } while (
+                snakes.some(s => s.occupiesPosition(newFoodX, newFoodY)) ||
+                foods.some((f, i) => i !== foodIdx && f.Xpos === newFoodX && f.Ypos === newFoodY)
+              )
+              foods[foodIdx] = { Xpos: newFoodX, Ypos: newFoodY }
+
+              // Update score for that snake
+              scores[idx] += 1
+              if (scores[idx] > highScore) {
+                highScore = scores[idx]
+                localStorage.setItem('snakeHighScore', highScore)
+                newHighScore = true
+              }
+              if (gameLoopTimeout > 25) gameLoopTimeout -= 0.5
             }
-            apple = { Xpos: newAppleX, Ypos: newAppleY }
-
-            // Actualizar puntaje de la serpiente que comió
-            let newScores = [...this.state.score]
-            newScores[idx] += 1
-
-            let highScore = this.state.highScore
-            let newHighScore = this.state.newHighScore
-            let gameLoopTimeout = this.state.gameLoopTimeout
-            if (newScores[idx] > highScore) {
-              highScore = newScores[idx]
-              localStorage.setItem('snakeHighScore', highScore)
-              newHighScore = true
-            }
-            if (gameLoopTimeout > 25) gameLoopTimeout -= 0.5
-
-            this.setState({
-              score: newScores,
-              highScore,
-              newHighScore,
-              gameLoopTimeout,
-            })
-          }
+          })
         })
 
         this.setState({
           snakes,
-          apple,
+          foods,
+          score: scores,
+          highScore,
+          newHighScore,
+          gameLoopTimeout,
           directionChanged: false,
         })
       }
@@ -160,7 +155,7 @@ class SnakeGame extends React.Component {
 
     this.setState({ timeoutId })
   }
-
+  
   componentWillUnmount() {
     clearTimeout(this.state.timeoutId)
     window.removeEventListener('keydown', this.handleKeyDown)
@@ -262,13 +257,16 @@ class SnakeGame extends React.Component {
           />
         ))}
 
-        <Apple
-          Xpos={this.state.apple.Xpos}
-          Ypos={this.state.apple.Ypos}
-          blockWidth={this.state.blockWidth}
-          blockHeight={this.state.blockHeight}
-          color={this.state.appleColor}
-        />
+         {this.state.foods.map((food, idx) => (
+          <Apple
+            key={idx}
+            Xpos={food.Xpos}
+            Ypos={food.Ypos}
+            blockWidth={this.state.blockWidth}
+            blockHeight={this.state.blockHeight}
+            color={this.state.appleColor}
+          />
+        ))}
 
         <div id='Score' style={{ fontSize: this.state.width / 20 }}>
           HIGH-SCORE: {this.state.highScore} &ensp;&ensp;&ensp;&ensp; SCORE: {this.state.score.reduce((a, b) => a + b, 0)}
