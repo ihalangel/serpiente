@@ -6,6 +6,7 @@ import SnakeBody from './game/SnakeBody.jsx'
 import Apple from './game/Apple.jsx'
 
 class SnakeGame extends React.Component {
+  //
   constructor(props) {
     super(props)
 
