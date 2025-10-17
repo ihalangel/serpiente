@@ -18,31 +18,67 @@ class Snake {
     }
   }
 
-  move(width, height) {
-    // Mueve la cabeza según la dirección
-    let head = { ...this.segments[0] };
+  // move(width, height) {
+  //   // Mueve la cabeza según la dirección
+  //   let head = { ...this.segments[0] };
 
-    switch (this.direction) {
-      case 'left':
-        head.Xpos = head.Xpos <= 0 ? width - this.blockWidth : head.Xpos - this.blockWidth;
-        break;
-      case 'up':
-        head.Ypos = head.Ypos <= 0 ? height - this.blockHeight : head.Ypos - this.blockHeight;
-        break;
-      case 'right':
-        head.Xpos = head.Xpos >= width - this.blockWidth ? 0 : head.Xpos + this.blockWidth;
-        break;
-      case 'down':
-        head.Ypos = head.Ypos >= height - this.blockHeight ? 0 : head.Ypos + this.blockHeight;
-        break;
-      default:
-        break;
-    }
+  //   switch (this.direction) {
+  //     case 'left':
+  //       head.Xpos = head.Xpos <= 0 ? width - this.blockWidth : head.Xpos - this.blockWidth;
+  //       break;
+  //     case 'up':
+  //       head.Ypos = head.Ypos <= 0 ? height - this.blockHeight : head.Ypos - this.blockHeight;
+  //       break;
+  //     case 'right':
+  //       head.Xpos = head.Xpos >= width - this.blockWidth ? 0 : head.Xpos + this.blockWidth;
+  //       break;
+  //     case 'down':
+  //       head.Ypos = head.Ypos >= height - this.blockHeight ? 0 : head.Ypos + this.blockHeight;
+  //       break;
+  //     default:
+  //       break;
+  //   }
 
-    // Mueve cada segmento a la posición del segmento anterior
-    this.segments.pop();
-    this.segments.unshift(head);
+  //   // Mueve cada segmento a la posición del segmento anterior
+  //   this.segments.pop();
+  //   this.segments.unshift(head);
+  // }
+
+
+move(width, height) {
+  let head = { ...this.segments[0] };
+  let newX = head.Xpos;
+  let newY = head.Ypos;
+
+  switch (this.direction) {
+    case 'left':
+      newX = head.Xpos - this.blockWidth;
+      break;
+    case 'up':
+      newY = head.Ypos - this.blockHeight;
+      break;
+    case 'right':
+      newX = head.Xpos + this.blockWidth;
+      break;
+    case 'down':
+      newY = head.Ypos + this.blockHeight;
+      break;
   }
+
+  // Verifica colisión con pared
+  if (newX < 0 || newX >= width || newY < 0 || newY >= height) {
+    return false; // colisión con pared detectada
+  }
+
+  // Actualiza posición seria válida
+  head.Xpos = newX;
+  head.Ypos = newY;
+
+  this.segments.pop();
+  this.segments.unshift(head);
+
+  return true; // movimiento exitoso
+}
 
   changeDirection(newDirection) {
     // Evita dirección opuesta directa

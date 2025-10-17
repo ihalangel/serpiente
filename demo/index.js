@@ -8,6 +8,7 @@ ReactDOM.render(
     <h1>react-snake</h1>
     <div className="textWrapper">
       <p id="instructions">Use the arrow keys or W/A/S/D to play</p>
+      <p id="instructions">press one of the keys to start</p>
       <p className="subTitle">A simple snake game created with the
       <a href="https://reactjs.org/" target="_blank" rel="noopener noreferrer"> React </a>
       JavaScript library</p>

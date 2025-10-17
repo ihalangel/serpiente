@@ -11,7 +11,8 @@ function GameOver(props) {
       }}>
       <div id='GameOver' style={{ fontSize: props.width / 15 }}>
         <div id='GameOverText'>GAME OVER</div>
-        <div>Your score: {props.score}</div>
+        <div>Score 1: {props.score[0]}</div>
+        <div>Score 2: {props.score[1]}</div>
         <div>
           {props.newHighScore ? 'New local ' : 'Local '}high score:{' '}
           {props.highScore}
@@ -21,5 +22,6 @@ function GameOver(props) {
     </div>
   )
 }
+
 
 export default GameOver
