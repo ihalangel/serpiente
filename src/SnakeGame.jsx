@@ -22,16 +22,16 @@ class SnakeGame extends React.Component {
       gameLoopTimeout: 50,
       timeoutId: 0,
       startSnakeSize: this.props.startSnakeSize || 6,
-      snakes: [], // Ahora guardamos dos serpientes
-      foods: [],  // se cambio a array para permitir multiples alimentos
+      snakes: [], // Now we store two snakes
+      foods: [],  // changed to array to allow multiple foods
       directionChanged: false,
       isGameOver: false,
       snakeColors: [this.props.snakeColor || this.getRandomColor(), this.getRandomColor()],
       appleColor: this.props.appleColor || this.getRandomColor(),
-      score: [0, 0], // Puntajes independientes para cada serpiente
+      score: [0, 0], // Independent scores for each snake
       highScore: Number(localStorage.getItem('snakeHighScore')) || 0,
       newHighScore: false,
-      isMoving: [false, false], // movimiento individual por serpiente
+      isMoving: [false, false], // individual movement per snake
     }
   }
 
@@ -52,7 +52,7 @@ class SnakeGame extends React.Component {
     let blockWidth = width / 30
     let blockHeight = height / 20
 
-    // Creación de dos instancias Snake con posiciones y colores distintos
+    // Create two Snake instances with different positions and colors
     let snake1 = new Snake(
       width / 3,
       height / 2,
@@ -106,7 +106,7 @@ gameLoop() {
     if (!this.state.isGameOver) {
       let gameOver = false;
 
-      // Mover sólo serpientes activas y chequear auto-colisión y colisión pared
+      // Move only active snakes and check self-collision and wall collision
       let snakes = this.state.snakes.map((snake, idx) => {
         if (this.state.isMoving[idx]) {
           const moved = snake.move(this.state.width, this.state.height);
@@ -116,19 +116,19 @@ gameLoop() {
         return snake;
       });
 
-      // Chequear colisiones entre serpientes
+      // Check collisions between snakes
       snakes.forEach((snake, idx) => {
         const otherSnakes = snakes.filter((_, i) => i !== idx);
         if (checkSnakeCollision(snake, otherSnakes)) gameOver = true;
       });
 
-      // Terminar juego si colisionó
+      // End game if collided
       if (gameOver) {
         this.setState({ isGameOver: true, timeoutId: 0 });
         return;
       }
 
-      // Manejo de comida y actualización de puntajes con Scoring
+      // Handle food and update scores with Scoring
       let foods = [...this.state.foods];
       let scores = this.scoring.getScores();
       let highScore = this.state.highScore;
@@ -140,7 +140,7 @@ gameLoop() {
         foods.forEach((food, foodIdx) => {
           if (head.Xpos === food.Xpos && head.Ypos === food.Ypos) {
             snake.grow();
-            // Reposicionar alimento evitando colisiones
+            // Reposition food avoiding collisions
             let newFoodX, newFoodY;
             do {
               newFoodX = Math.floor(Math.random() * ((this.state.width - this.state.blockWidth) / this.state.blockWidth + 1)) * this.state.blockWidth;
@@ -151,7 +151,7 @@ gameLoop() {
             );
             foods[foodIdx] = { Xpos: newFoodX, Ypos: newFoodY };
 
-            // Incrementar puntaje usando el objeto Scoring
+            // Increase score using the Scoring object
             scores = this.scoring.incrementScore(idx);
 
             if (scores[idx] > highScore) {
@@ -164,7 +164,7 @@ gameLoop() {
         });
       });
 
-      // Actualiza estado con nuevos datos
+      // Update state with new data
       this.setState({
         snakes,
         foods,
@@ -193,10 +193,10 @@ gameLoop() {
 
  resetGame() {
     clearTimeout(this.state.timeoutId);
-    this.scoring = new Scoring([0, 0]); // Reiniciar Scoring con 0,0
+    this.scoring = new Scoring([0, 0]); // Reset Scoring with 0,0
     this.initGame();
     this.setState({
-      isMoving: [false, false], // ambas inician quietas
+      isMoving: [false, false], // both start still
       directionChanged: false,
       isGameOver: false,
       score: [0, 0],
@@ -225,7 +225,7 @@ gameLoop() {
     let isMoving = [...this.state.isMoving];
 
     switch (event.keyCode) {
-      // Serpiente 1 (flechas)
+      // Snake 1 (arrow keys)
       case 37:
         snake1.changeDirection('left');
         isMoving[0] = true;
@@ -243,7 +243,7 @@ gameLoop() {
         isMoving[0] = true;
         break;
 
-      // Serpiente 2 (WASD)
+      // Snake 2 (WASD)
       case 65:
         snake2.changeDirection('left');
         isMoving[1] = true;
@@ -270,7 +270,7 @@ gameLoop() {
       snakes: [snake1, snake2],
       isMoving: isMoving,
     }, () => {
-      // Si alguna serpiente no estaba moviéndose, iniciamos el juego
+      // If any snake was not moving, start the game
       if (isMoving.some(m => m) && !this.state.timeoutId) {
         this.gameLoop();
       }
@@ -287,7 +287,7 @@ gameLoop() {
   height={this.state.height}
   highScore={this.state.highScore}
   newHighScore={this.state.newHighScore}
-  score={this.state.score}  // pasar array en vez de suma
+  score={this.state.score}  // pass array instead of sum
 />
 
       )

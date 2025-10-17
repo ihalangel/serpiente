@@ -21,7 +21,7 @@
     "type": "git",
     "url": "https://github.com/MaelDrapier/react-snake.git"
   },
-  "homepage": "https://maeldrapier.github.io/react-snake",
+  "homepage": "https://ihalangel.github.io/serpiente",
   "peerDependencies": {
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
@@ -29,9 +29,10 @@
   "scripts": {
     "start": "webpack serve --config demo/webpack.config.js --mode development",
     "build": "webpack --config demo/webpack.config.js --mode production",
+    "lint": "eslint src/*.jsx --fix",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d demo/public",
-    "lint": "eslint src/*.jsx --fix"
+    "deploy": "gh-pages -d build"
+
   },
   "dependencies": {
     "react": "^17.0.1",
